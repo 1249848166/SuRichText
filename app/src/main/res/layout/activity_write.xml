@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.WriteActivity">
+
+    <android.support.v7.widget.Toolbar
+        app:contentInsetStart="0dp"
+        android:background="#000"
+        android:layout_width="match_parent"
+        android:layout_height="80dp">
+
+        <RelativeLayout
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_marginTop="20dp"
+            android:layout_height="60dp">
+
+            <TextView
+                android:text="发表文章"
+                android:layout_marginLeft="10dp"
+                android:textColor="#fff"
+                android:textSize="20sp"
+                android:layout_centerVertical="true"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:ignore="HardcodedText,RtlHardcoded" />
+
+            <ImageView
+                android:id="@+id/finish"
+                android:src="@mipmap/check"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                tools:ignore="RtlHardcoded" />
+
+            <ProgressBar
+                android:id="@+id/updating_progress"
+                android:visibility="invisible"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                tools:ignore="RtlHardcoded" />
+
+            <TextView
+                android:id="@+id/updating_text"
+                android:text="正在上传..."
+                android:visibility="invisible"
+                android:textColor="#fff"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="40dp"
+                android:layout_centerVertical="true"
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:ignore="HardcodedText,RtlHardcoded" />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+    <ScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0px">
+
+        <LinearLayout
+            android:id="@+id/container"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:background="#f90"
+        android:gravity="center"
+        android:focusableInTouchMode="true"
+        android:focusable="true"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <ImageView
+            android:id="@+id/img"
+            android:src="@drawable/camera_black"
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
+
+        <EditText
+            android:id="@+id/txt"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:hint="请输入文本..."
+            android:background="#fff"
+            android:layout_width="0px"
+            android:layout_height="40dp"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/btn"
+            android:text="添加"
+            android:layout_margin="5dp"
+            android:textColor="#fff"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:background="#00ff00"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
+</LinearLayout>

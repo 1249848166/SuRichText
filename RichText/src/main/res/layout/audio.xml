@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:elevation="5dp"
+    android:background="#fff"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:ignore="UnusedAttribute">
+
+    <RelativeLayout
+        android:background="@drawable/gradient_square"
+        android:layout_width="match_parent"
+        android:layout_height="20dp">
+
+        <ImageView
+            android:id="@+id/drop"
+            android:visibility="gone"
+            android:src="@drawable/clear"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="RtlHardcoded" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/folderName"
+            android:padding="5dp"
+            android:textSize="16sp"
+            android:textColor="#000"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/duration"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="UnusedAttribute">
+
+        <ImageView
+            android:src="@drawable/audio"
+            android:padding="10dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
+
+        <SeekBar
+            android:id="@+id/seekbar"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/play"
+            android:src="@drawable/play_green"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="5dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            tools:ignore="RtlHardcoded" />
+
+    </LinearLayout>
+
+</LinearLayout>

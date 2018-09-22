@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="su.com.richtext">
+
+    <application>
+        <activity android:name=".activity.SuSelectImageActivity"
+            android:theme="@style/NoTitle"/>
+        <activity android:name=".activity.SuSelectVideoActivity"
+            android:theme="@style/NoTitle"/>
+        <activity android:name=".activity.SuSelectAudioActivity"
+            android:theme="@style/NoTitle"/>
+    </application>
+
+</manifest>
