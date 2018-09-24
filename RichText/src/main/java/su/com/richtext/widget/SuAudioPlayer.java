@@ -32,6 +32,16 @@ public class SuAudioPlayer {
     TextView duration;
     ImageView drop;
     LinearLayout layout;
+    boolean preIsPlaying=false;
+    int progress=0;
+
+    public boolean isPreIsPlaying() {
+        return preIsPlaying;
+    }
+
+    public void setPreIsPlaying(boolean preIsPlaying) {
+        this.preIsPlaying = preIsPlaying;
+    }
 
     public void release() {
         player.stop();
@@ -103,7 +113,7 @@ public class SuAudioPlayer {
         player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                play.setImageResource(R.drawable.play_green);
+                play.setImageResource(R.drawable.play_black);
                 seekbar.setProgress(0);
                 if(callback!=null){
                     callback.onCompletion(player);
@@ -113,7 +123,7 @@ public class SuAudioPlayer {
         player.setOnErrorListener(new MediaPlayer.OnErrorListener() {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
-                play.setImageResource(R.drawable.play_green);
+                play.setImageResource(R.drawable.play_black);
                 switch (what) {
                     case MediaPlayer.MEDIA_ERROR_UNKNOWN:
                         System.out.println("未知错误");
@@ -166,12 +176,12 @@ public class SuAudioPlayer {
             public void onClick(View v) {
                 if(player.isPlaying()){
                     player.pause();
-                    play.setImageResource(R.drawable.play_green);
+                    play.setImageResource(R.drawable.play_black);
                     if(callback!=null)
                         callback.onStateChange(false);
                 }else{
                     player.start();
-                    play.setImageResource(R.drawable.pause_red);
+                    play.setImageResource(R.drawable.pause_black);
                     if(callback!=null)
                         callback.onStateChange(true);
                 }
@@ -213,9 +223,11 @@ public class SuAudioPlayer {
 
     public void pause() {
         player.pause();
+        progress=player.getCurrentPosition();
     }
 
     public void start() {
+        player.seekTo(progress);
         player.start();
     }
 

@@ -2,8 +2,10 @@ package su.com.richtext.widget;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -37,6 +39,16 @@ public class SuVideoPlayer implements SurfaceHolder.Callback{
     private TextView text;
     private ImageView play;
     private ImageView drop;
+    boolean preIsPlaying=false;
+    int progress=0;
+
+    public boolean isPreIsPlaying() {
+        return preIsPlaying;
+    }
+
+    public void setPreIsPlaying(boolean preIsPlaying) {
+        this.preIsPlaying = preIsPlaying;
+    }
 
     public interface DropListener{
         void drop();
@@ -62,7 +74,7 @@ public class SuVideoPlayer implements SurfaceHolder.Callback{
         void onStateChange(boolean isPlaying);
     }
 
-    public SuVideoPlayer(Context context, final String url,@Nullable final Callback callback) {
+    public SuVideoPlayer(final Context context, final String url, @Nullable final Callback callback) {
         try {
             DisplayMetrics metrics = context.getResources().getDisplayMetrics();
             screenWidth = metrics.widthPixels;
@@ -122,7 +134,7 @@ public class SuVideoPlayer implements SurfaceHolder.Callback{
             player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
-                    play.setImageResource(R.drawable.play_green);
+                    play.setImageResource(R.drawable.play_white);
                     seekBar.setProgress(0);
                 }
             });
@@ -131,15 +143,25 @@ public class SuVideoPlayer implements SurfaceHolder.Callback{
                 public void onClick(View v) {
                     if(player.isPlaying()){
                         player.pause();
-                        play.setImageResource(R.drawable.play_green);
+                        play.setImageResource(R.drawable.play_white);
                         if(callback!=null)
                             callback.onStateChange(false);
                     }else{
                         player.start();
-                        play.setImageResource(R.drawable.pause_red);
+                        play.setImageResource(R.drawable.pause_white);
                         if(callback!=null)
                             callback.onStateChange(true);
                     }
+                }
+            });
+            View zone=parent.findViewById(R.id.zone);
+            zone.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Uri uri=Uri.parse(url);
+                    Intent intent=new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(uri,"video/mp4");
+                    context.startActivity(intent);
                 }
             });
             drop=parent.findViewById(R.id.drop);
@@ -166,6 +188,7 @@ public class SuVideoPlayer implements SurfaceHolder.Callback{
 
     public void pause() {
         player.pause();
+        progress=player.getCurrentPosition();
     }
 
     public void insertInto(ViewGroup p){
@@ -243,6 +266,7 @@ public class SuVideoPlayer implements SurfaceHolder.Callback{
     }
 
     public void start() {
+        player.seekTo(progress);
         player.start();
     }
 }

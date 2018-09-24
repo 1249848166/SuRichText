@@ -48,9 +48,9 @@
 
         <ImageView
             android:id="@+id/play"
-            android:src="@drawable/play_green"
-            android:layout_width="48dp"
-            android:layout_height="48dp" />
+            android:src="@drawable/play_white"
+            android:layout_width="25dp"
+            android:layout_height="25dp" />
 
         <SeekBar
             android:id="@+id/seekbar"
@@ -60,12 +60,18 @@
 
         <TextView
             android:id="@+id/text"
-            android:text="100/1000"
+            android:text="00:00/00:00"
             android:textColor="#fff"
             android:layout_marginRight="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:ignore="HardcodedText,RtlHardcoded" />
+
+        <ImageView
+            android:id="@+id/zone"
+            android:src="@drawable/zone"
+            android:layout_width="25dp"
+            android:layout_height="25dp" />
 
     </LinearLayout>
 

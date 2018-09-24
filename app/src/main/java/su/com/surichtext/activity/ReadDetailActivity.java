@@ -24,6 +24,18 @@ public class ReadDetailActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        richText.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        richText.onPause();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         richText.onEnd();

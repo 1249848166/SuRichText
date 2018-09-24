@@ -104,7 +104,7 @@ public class SuAudioAdapter extends RecyclerView.Adapter<SuAudioAdapter.Holder> 
     private void previewAudio(String path) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         Uri uri = Uri.parse(path);
-        intent.setDataAndType(uri, "audio/mp3");
+        intent.setDataAndType(uri, "audio_white/mp3");
         context.startActivity(intent);
     }
 

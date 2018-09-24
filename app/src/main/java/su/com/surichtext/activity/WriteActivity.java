@@ -254,6 +254,18 @@ public class WriteActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        richTextEditor.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        richTextEditor.onPause();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         richTextEditor.onEnd();

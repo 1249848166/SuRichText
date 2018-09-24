@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:elevation="5dp"
-    android:background="#fff"
+    android:background="#eee"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:ignore="UnusedAttribute">
@@ -34,6 +34,8 @@
             android:id="@+id/folderName"
             android:padding="5dp"
             android:textSize="16sp"
+            android:singleLine="true"
+            android:ellipsize="marquee"
             android:textColor="#000"
             android:layout_width="0dp"
             android:layout_weight="1"
@@ -42,7 +44,10 @@
         <TextView
             android:id="@+id/duration"
             android:layout_weight="1"
+            android:textColor="#000"
             android:gravity="center"
+            android:singleLine="true"
+            android:ellipsize="marquee"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />
 
@@ -56,7 +61,7 @@
         tools:ignore="UnusedAttribute">
 
         <ImageView
-            android:src="@drawable/audio"
+            android:src="@drawable/audio_black"
             android:padding="10dp"
             android:layout_width="50dp"
             android:layout_height="50dp" />
@@ -69,7 +74,7 @@
 
         <ImageView
             android:id="@+id/play"
-            android:src="@drawable/play_green"
+            android:src="@drawable/play_black"
             android:layout_marginRight="15dp"
             android:layout_marginLeft="5dp"
             android:layout_width="30dp"

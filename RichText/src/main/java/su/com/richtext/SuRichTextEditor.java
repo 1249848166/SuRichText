@@ -5,11 +5,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Editable;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
@@ -22,7 +26,14 @@ import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import org.xml.sax.XMLReader;
+
+import java.io.InputStream;
+import java.lang.ref.SoftReference;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +43,7 @@ import su.com.richtext.activity.SuSelectAudioActivity;
 import su.com.richtext.activity.SuSelectImageActivity;
 import su.com.richtext.activity.SuSelectVideoActivity;
 import su.com.richtext.utils.SuImageLoader;
+import su.com.richtext.view.HttpDrawable;
 import su.com.richtext.view.SuDropableTextView;
 import su.com.richtext.callback.SuResultCallback;
 import su.com.richtext.callback.SuSearchCallback;
@@ -98,6 +110,48 @@ public class SuRichTextEditor {
         handler.sendEmptyMessageDelayed(0,500);
     }
 
+    public void onResume(){
+        if(audioPlayerMap!=null&&audioPlayerMap.size()>0)
+            for(SuAudioPlayer suAudioPlayer : audioPlayerMap.values()){
+                if(suAudioPlayer!=null&&!suAudioPlayer.isPlaying()&&suAudioPlayer.isPreIsPlaying()) {
+                    suAudioPlayer.start();
+                }
+            }
+        System.out.println("audioPlayerMap已开始");
+        if(videoPlayerMap!=null&&videoPlayerMap.size()>0)
+            for(SuVideoPlayer suVideoPlayer : videoPlayerMap.values()){
+                if(suVideoPlayer!=null&&!suVideoPlayer.isPlaying()&&suVideoPlayer.isPreIsPlaying()) {
+                    suVideoPlayer.start();
+                }
+            }
+        System.out.println("videoPlayerMap已开始");
+    }
+
+    public void onPause(){
+        if(audioPlayerMap!=null&&audioPlayerMap.size()>0)
+            for(SuAudioPlayer suAudioPlayer : audioPlayerMap.values()){
+                if(suAudioPlayer!=null&&suAudioPlayer.isPlaying()) {
+                    suAudioPlayer.setPreIsPlaying(true);
+                    suAudioPlayer.pause();
+                }
+                if(suAudioPlayer!=null&&!suAudioPlayer.isPlaying()) {
+                    suAudioPlayer.setPreIsPlaying(false);
+                }
+            }
+        System.out.println("audioPlayerMap已暂停");
+        if(videoPlayerMap!=null&&videoPlayerMap.size()>0)
+            for(SuVideoPlayer suVideoPlayer : videoPlayerMap.values()){
+                if(suVideoPlayer!=null&&suVideoPlayer.isPlaying()) {
+                    suVideoPlayer.setPreIsPlaying(true);
+                    suVideoPlayer.pause();
+                }
+                if(suVideoPlayer!=null&&!suVideoPlayer.isPlaying()) {
+                    suVideoPlayer.setPreIsPlaying(false);
+                }
+            }
+        System.out.println("videoPlayerMap已暂停");
+    }
+
     public void onEnd(){
         if(audioPlayerMap!=null&&audioPlayerMap.size()>0)
             for(SuAudioPlayer suAudioPlayer : audioPlayerMap.values()){
@@ -160,7 +214,20 @@ public class SuRichTextEditor {
         layout.setLayoutParams(params);
         final SuDropableTextView textView = new SuDropableTextView(context);
         textView.setLayoutParams(params);
-        Spanned spanned = Html.fromHtml(text);
+        Spanned spanned = Html.fromHtml(text, new Html.ImageGetter() {
+            @Override
+            public Drawable getDrawable(String s) {
+                HttpDrawable httpDrawable = new HttpDrawable(null);
+                SuRichTextEditor.Task task = new SuRichTextEditor.Task(textView, httpDrawable);
+                task.execute(s);
+                return httpDrawable;
+            }
+        }, new Html.TagHandler() {
+            @Override
+            public void handleTag(boolean b, String s, Editable editable, XMLReader xmlReader) {
+                System.out.println(s + ":" + editable.toString());
+            }
+        });
         textView.setText(spanned);
         textView.setBackgroundColor(Color.parseColor("#dddddd"));
         textView.setPadding(10, 10, 10, 10);
@@ -201,6 +268,55 @@ public class SuRichTextEditor {
         container.addView(layout);
     }
 
+    @SuppressLint("StaticFieldLeak")
+    class Task extends AsyncTask<String, Void, Drawable> {
+
+        SoftReference<TextView> textView;
+        SoftReference<HttpDrawable> mDrawable;
+
+        Task(TextView textView,HttpDrawable drawable) {
+            this.textView = new SoftReference<>(textView);
+            mDrawable = new SoftReference<>(drawable);
+        }
+
+        @Override
+        protected Drawable doInBackground(String... strings) {
+            try {
+                URL url = new URL(strings[0]);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setReadTimeout(5000);
+                connection.setConnectTimeout(5000);
+                connection.setRequestMethod("GET");
+                connection.connect();
+                int code = connection.getResponseCode();
+                if (code == 200) {
+                    InputStream inputStream = connection.getInputStream();
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    return new BitmapDrawable(bitmap);
+                } else {
+                    return null;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Drawable drawable) {
+            super.onPostExecute(drawable);
+            mDrawable.get().setDrawable(drawable);
+            DisplayMetrics metrics = new DisplayMetrics();
+            ((Activity) context).getWindow().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            int w = metrics.widthPixels;
+            int h = metrics.heightPixels;
+            float ratio = (float) drawable.getIntrinsicHeight() / drawable.getIntrinsicWidth();
+            mDrawable.get().setBounds(0, 0, w, (int) (h * ratio));
+            mDrawable.get().getDrawable().setBounds(0, 0, w, (int) (h * ratio));
+            textView.get().setText(textView.get().getText());
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     public void insertAudio(final String path) {
         dataList.add("[audio]" + path);
@@ -233,7 +349,7 @@ public class SuRichTextEditor {
                             if (!suAudioPlayer.getUrl().equals(path)) {
                                 if (suAudioPlayer.isPrepared() && suAudioPlayer.isPlaying()) {
                                     suAudioPlayer.pause();
-                                    suAudioPlayer.getControllor().setImageResource(R.drawable.play_green);
+                                    suAudioPlayer.getControllor().setImageResource(R.drawable.play_white);
                                 }
                             }
                         }
@@ -263,7 +379,7 @@ public class SuRichTextEditor {
                             if (!suVideoPlayer.getUrl().equals(path)) {
                                 if (!suVideoPlayer.isFirst() && suVideoPlayer.isPlaying()) {
                                     suVideoPlayer.pause();
-                                    suVideoPlayer.getControllor().setImageResource(R.drawable.play_green);
+                                    suVideoPlayer.getControllor().setImageResource(R.drawable.play_white);
                                 }
                             }
                         }

@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import su.com.richtext.utils.SuImageLoader;
+import su.com.richtext.view.HttpDrawable;
 import su.com.richtext.widget.SuAudioPlayer;
 import su.com.richtext.widget.SuVideoPlayer;
 
@@ -183,7 +184,7 @@ public class SuRichText extends ScrollView {
                                 if (!suAudioPlayer.getUrl().equals(url)) {
                                     if (suAudioPlayer.isPrepared() && suAudioPlayer.isPlaying()) {
                                         suAudioPlayer.pause();
-                                        suAudioPlayer.getControllor().setImageResource(R.drawable.play_green);
+                                        suAudioPlayer.getControllor().setImageResource(R.drawable.play_black);
                                     }
                                 }
                             }
@@ -208,7 +209,7 @@ public class SuRichText extends ScrollView {
                                 if (!suVideoPlayer.getUrl().equals(url)) {
                                     if (!suVideoPlayer.isFirst() && suVideoPlayer.isPlaying()) {
                                         suVideoPlayer.pause();
-                                        suVideoPlayer.getControllor().setImageResource(R.drawable.play_green);
+                                        suVideoPlayer.getControllor().setImageResource(R.drawable.play_black);
                                     }
                                 }
                             }
@@ -241,6 +242,48 @@ public class SuRichText extends ScrollView {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void onResume(){
+        if(audioPlayerMap!=null&&audioPlayerMap.size()>0)
+            for(SuAudioPlayer suAudioPlayer : audioPlayerMap.values()){
+                if(suAudioPlayer!=null&&!suAudioPlayer.isPlaying()&&suAudioPlayer.isPreIsPlaying()) {
+                    suAudioPlayer.start();
+                }
+            }
+        System.out.println("audioPlayerMap已开始");
+        if(videoPlayerMap!=null&&videoPlayerMap.size()>0)
+            for(SuVideoPlayer suVideoPlayer : videoPlayerMap.values()){
+                if(suVideoPlayer!=null&&!suVideoPlayer.isPlaying()&&suVideoPlayer.isPreIsPlaying()) {
+                    suVideoPlayer.start();
+                }
+            }
+        System.out.println("videoPlayerMap已开始");
+    }
+
+    public void onPause(){
+        if(audioPlayerMap!=null&&audioPlayerMap.size()>0)
+            for(SuAudioPlayer suAudioPlayer : audioPlayerMap.values()){
+                if(suAudioPlayer!=null&&suAudioPlayer.isPlaying()) {
+                    suAudioPlayer.setPreIsPlaying(true);
+                    suAudioPlayer.pause();
+                }
+                if(suAudioPlayer!=null&&!suAudioPlayer.isPlaying()) {
+                    suAudioPlayer.setPreIsPlaying(false);
+                }
+            }
+        System.out.println("audioPlayerMap已暂停");
+        if(videoPlayerMap!=null&&videoPlayerMap.size()>0)
+            for(SuVideoPlayer suVideoPlayer : videoPlayerMap.values()){
+                if(suVideoPlayer!=null&&suVideoPlayer.isPlaying()) {
+                    suVideoPlayer.setPreIsPlaying(true);
+                    suVideoPlayer.pause();
+                }
+                if(suVideoPlayer!=null&&!suVideoPlayer.isPlaying()) {
+                    suVideoPlayer.setPreIsPlaying(false);
+                }
+            }
+        System.out.println("videoPlayerMap已暂停");
     }
 
     public void onEnd(){
@@ -297,30 +340,15 @@ public class SuRichText extends ScrollView {
         @Override
         protected void onPostExecute(Drawable drawable) {
             super.onPostExecute(drawable);
-            mDrawable.get().drawable = drawable;
+            mDrawable.get().setDrawable(drawable);
             DisplayMetrics metrics = new DisplayMetrics();
             ((Activity) context).getWindow().getWindowManager().getDefaultDisplay().getMetrics(metrics);
             int w = metrics.widthPixels;
             int h = metrics.heightPixels;
             float ratio = (float) drawable.getIntrinsicHeight() / drawable.getIntrinsicWidth();
             mDrawable.get().setBounds(0, 0, w, (int) (h * ratio));
-            mDrawable.get().drawable.setBounds(0, 0, w, (int) (h * ratio));
+            mDrawable.get().getDrawable().setBounds(0, 0, w, (int) (h * ratio));
             textView.get().setText(textView.get().getText());
-        }
-    }
-
-    class HttpDrawable extends BitmapDrawable {
-
-        Drawable drawable;
-
-        HttpDrawable(Drawable drawable) {
-            this.drawable = drawable;
-        }
-
-        @Override
-        public void draw(Canvas canvas) {
-            if (drawable != null)
-                drawable.draw(canvas);
         }
     }
 }

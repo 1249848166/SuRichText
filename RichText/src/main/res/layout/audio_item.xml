@@ -5,12 +5,12 @@
     android:orientation="horizontal"
     android:gravity="center_vertical"
     android:layout_width="match_parent"
-    android:background="#ddd"
+    android:background="#fff"
     android:layout_height="50dp" >
 
     <ImageView
         android:id="@+id/img"
-        android:src="@drawable/audio"
+        android:src="@drawable/audio_black"
         android:layout_marginStart="10dp"
         android:scaleType="centerCrop"
         android:layout_width="wrap_content"
